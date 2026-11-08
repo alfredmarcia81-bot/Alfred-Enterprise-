@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#123b2a"><meta name="description" content="Shop Alfred Enterprise in Kenema, Sierra Leone.">
+<link rel="manifest" href="./manifest.webmanifest">
+<title>Shop &amp; Order | Alfred Enterprise</title>
+<style>
+:root{--green:#123b2a;--gold:#f2b544;--bg:#f5f7f5}*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#17221b}
+header{background:var(--green);color:#fff;padding:22px 16px}header h1{margin:0;font-size:25px}header p{margin:7px 0 0;color:#e5eee8}
+.wrap{max-width:1000px;margin:auto;padding:16px}.notice{background:#fff4d9;padding:12px;border-radius:10px;margin:14px 0}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.tools input,.tools select{padding:12px;border:1px solid #ccd5ce;border-radius:8px;flex:1;min-width:150px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}.card,.panel{background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 8px #0000000d}
+.pic{height:112px;border-radius:9px;background:#e8efe9;display:grid;place-items:center;font-size:48px}
+.card h3{font-size:15px;margin:10px 0 6px}.card p{font-size:12px;color:#59665e;min-height:30px;margin:0 0 10px}
+button{background:var(--green);color:#fff;border:0;padding:11px 13px;border-radius:8px;font-weight:bold;cursor:pointer}.card button{width:100%}
+.panel{margin:18px 0}.row{display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid #eee;padding:9px 0}
+.row button{padding:5px 9px}.checkout input,.checkout textarea,.tracking input{display:block;width:100%;padding:12px;margin:9px 0;border:1px solid #ccd5ce;border-radius:8px;font:inherit}
+.checkout button,.tracking button{width:100%;padding:14px;background:#16834a}
+.small{font-size:13px;color:#59665e;line-height:1.5}.refbox{background:#eef5ef;padding:12px;border-radius:9px;margin:12px 0;display:none}
+footer{text-align:center;padding:22px;color:#5b665e;font-size:13px}
+</style>
+</head>
+<body>
+<div style="background:#f2b544;padding:10px 16px;text-align:center"><a href="./index.html" style="color:#123b2a;font-weight:bold;text-decoration:none">← Back to Alfred Enterprise Main Website</a></div><header><div class="wrap"><h1>Alfred Enterprise</h1><p>Useful products, friendly service — Kenema, Sierra Leone</p></div></header>
+<main class="wrap">
+<div class="notice"><b>Cash on delivery:</b> Pay when your order arrives. Delivery available in Ida and surrounding areas of Kenema City. For help: +232 766 55025.</div>
+<h2>Shop Our Products</h2>
+<div class="tools"><input id="search" placeholder="Search products…" aria-label="Search products"><select id="category"><option value="all">All categories</option><option>Phone accessories</option><option>Electrical</option><option>Home and tools</option><option>Services</option></select></div>
+<section id="products" class="grid"></section>
+<section class="panel"><h2>Your Cart (<span id="count">0</span>)</h2><div id="cartItems">Your cart is empty.</div><div class="row"><b>Total items</b><b id="total">0</b></div></section>
+<section class="panel checkout"><h2>Checkout</h2><p class="small">Enter your details. WhatsApp will open with your order prepared. Press Send in WhatsApp to place the order.</p>
+<form id="order"><input id="name" placeholder="Your full name" required><input id="phone" placeholder="Your phone number" required><textarea id="address" placeholder="Delivery location / directions" required rows="3"></textarea><button type="submit">Order on WhatsApp — Cash on delivery</button></form>
+<div id="newRef" class="refbox"></div></section>
+<section class="panel tracking" id="tracking"><h2>Track Your Order</h2>
+<p>Enter the order reference you received when placing your order. Alfred Enterprise will confirm the latest status with you through WhatsApp.</p>
+<form id="trackForm"><input id="trackRef" placeholder="Example: AE-12345678" autocomplete="off" required><button type="submit">Check order status</button></form>
+<p class="small"><b>Please note:</b> This version sends your reference to Alfred Enterprise on WhatsApp. It does not yet retrieve live status automatically. The shop will confirm whether your order is pending, confirmed, or delivered.</p>
+</section>
+</main><footer>Alfred Enterprise · Kenema, Sierra Leone</footer>
+<script>
+const items=[['Android screen protector','Phone accessories','🛡️','Screen protection for Android phones'],['Android phone pouch / case','Phone accessories','📱','Protective phone pouch or case'],['Phone charger','Phone accessories','🔌','Phone charging accessory'],['USB cable','Phone accessories','🔗','USB charging and data cable'],['Earpiece / headphones','Phone accessories','🎧','Audio accessory'],['Bluetooth speaker','Phone accessories','🔊','Portable speaker'],['Rechargeable light / torch','Electrical','🔦','Portable rechargeable lighting'],['Electric bulb','Electrical','💡','Lighting bulb'],['Extension socket','Electrical','🔌','Multi-outlet extension'],['Battery','Electrical','🔋','General-purpose battery'],['Padlock','Home and tools','🔒','Security padlock'],['Hinge','Home and tools','⚙️','Door and cabinet hinge'],['Nail cutter','Home and tools','✂️','Personal care nail cutter'],['Nails','Home and tools','🔩','General-purpose nails'],['Mobile top-up / data','Services','📶','Mobile airtime and data service'],['Mobile money service','Services','📲','Mobile money assistance']].map((x,i)=>({id:i+1,name:x[0],cat:x[1],icon:x[2],desc:x[3]}));
+let cart={};const $=id=>document.getElementById(id);
+function render(){let q=$('search').value.toLowerCase(),c=$('category').value;
+$('products').innerHTML=items.filter(p=>(c==='all'||p.cat===c)&&(p.name.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q))).map(p=>`<article class="card"><div class="pic" role="img" aria-label="Illustration for ${p.name}">${p.icon}</div><h3>${p.name}</h3><p>${p.desc}</p><button onclick="add(${p.id})">Add to cart</button></article>`).join('')||'<p>No matching products.</p>';
+let ids=Object.keys(cart);$('count').textContent=ids.reduce((s,k)=>s+cart[k],0);$('total').textContent=$('count').textContent;
+$('cartItems').innerHTML=ids.length?ids.map(k=>{let p=items.find(x=>x.id==k);return `<div class="row"><span>${p.name} × ${cart[k]}</span><span><button onclick="change(${k},-1)">−</button> <button onclick="change(${k},1)">+</button></span></div>`}).join(''):'Your cart is empty.'}
+function add(id){cart[id]=(cart[id]||0)+1;render()}function change(id,n){cart[id]=(cart[id]||0)+n;if(cart[id]<=0)delete cart[id];render()}
+$('search').addEventListener('input',render);$('category').addEventListener('change',render);
+$('order').addEventListener('submit',e=>{e.preventDefault();if(!Object.keys(cart).length){alert('Please add at least one product to your cart.');return}
+let ref='AE-'+Date.now().toString().slice(-8);let lines=Object.keys(cart).map(k=>`${items.find(p=>p.id==k).name} x ${cart[k]}`).join('\n');
+let msg=`Hello Alfred Enterprise, I would like to place an order.\nOrder reference: ${ref}\nName: ${$('name').value}\nPhone: ${$('phone').value}\nDelivery location: ${$('address').value}\nOrder:\n${lines}\nPayment: Cash on delivery`;
+localStorage.setItem('alfredLastOrderRef',ref);$('trackRef').value=ref;$('newRef').style.display='block';$('newRef').innerHTML=`<b>Your order reference: ${ref}</b><br><span class="small">Keep this number to ask about your order.</span>`;
+location.href='https://wa.me/23276655025?text='+encodeURIComponent(msg)});
+$('trackForm').addEventListener('submit',e=>{e.preventDefault();let ref=$('trackRef').value.trim();if(!ref){alert('Please enter your order reference.');return}
+let msg=`Hello Alfred Enterprise, please confirm the status of my order.\nOrder reference: ${ref}`;
+location.href='https://wa.me/23276655025?text='+encodeURIComponent(msg)});
+let saved=localStorage.getItem('alfredLastOrderRef');if(saved)$('trackRef').value=saved;render();
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script></body></html>
